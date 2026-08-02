@@ -7,8 +7,13 @@ class ParameterHandler:
         # We start with existing parameters if any set
         pass
 
+    @classmethod
+    def reset(cls):
+        cls._params = {}
+
     def setParam(self, key, value):
         ParameterHandler._params[key] = value
 
     def getValue(self, key):
         return ParameterHandler._params.get(key, False)
+

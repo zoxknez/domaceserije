@@ -742,3 +742,6 @@ def SSsearch(sGui=False, sSearchText=False):
     if not sGui:
         oGui.setView(determine_view_mode(cards))
         oGui.setEndOfDirectory()
+
+_search = SSsearch
+
