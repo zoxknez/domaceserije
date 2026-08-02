@@ -38,18 +38,19 @@ def test_add_resolver_referer():
     url1 = domaceserije.add_resolver_referer("https://vidmoly.biz/embed.html", ref, "VidMoly")
     require(url1 == "https://vidmoly.biz/embed.html", "VidMoly should not append referer")
 
-    # Flemoon (REFERER_HOSTERS)
+    # Flemoon (REFERER_HOSTERS) - bysebuho normalized to filemoon.sx
     url2 = domaceserije.add_resolver_referer("https://bysebuho.com/e/123", ref, "Flemoon")
-    require(url2 == f"https://bysebuho.com/e/123$${ref}", "Flemoon should append $$referer")
+    require(url2 == f"https://filemoon.sx/e/123$${ref}", "Flemoon should append $$referer and normalize domain")
 
-    # Vidhide (REFERER_HOSTERS)
+    # Vidhide (REFERER_HOSTERS) - morencius normalized to vidhidepro.com
     url3 = domaceserije.add_resolver_referer("https://morencius.com/embed/123", ref, "VIDHIDE")
-    require(url3 == f"https://morencius.com/embed/123$${ref}", "Vidhide should append $$referer")
+    require(url3 == f"https://vidhidepro.com/embed/123$${ref}", "Vidhide should append $$referer and normalize domain")
 
     # Already contains $$referer -> Idempotent
-    already = f"https://morencius.com/embed/123$${ref}"
+    already = f"https://filemoon.sx/e/123$${ref}"
     url4 = domaceserije.add_resolver_referer(already, ref, "VIDHIDE")
     require(url4 == already, "Already appended referer should be left intact")
+
 
 def test_extract_year():
     print("Executing test_extract_year...")

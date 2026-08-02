@@ -52,7 +52,7 @@ def normalize_hostname(value):
         hostname = hostname[4:]
     return hostname
 
-def request_page(url, caching=True, ignoreErrors=False, cache_time=None, referer=None, origin=None, bypass_dns=False):
+def request_page(url, caching=True, ignoreErrors=True, cache_time=None, referer=None, origin=None, bypass_dns=False):
     """Mrežni zahtev sa podrškom za keširanje, Referer/Origin zaglavlja i detekciju grešaka"""
     try:
         req = cRequestHandler(url, caching=caching, ignoreErrors=ignoreErrors, bypass_dns=bypass_dns)
@@ -96,8 +96,15 @@ def make_full_url(path, base_url=None):
     return urljoin(base_url or (URL_MAIN + '/'), path)
 
 def add_resolver_referer(stream_url, referer, hoster_name=""):
-    """Dodaje ResolveURL Referer za hostere kojima je potreban (prepoznaje i domen i ime servera)"""
-    if not stream_url or "$$" in stream_url or not referer:
+    """Dodaje ResolveURL Referer za hostere kojima je potreban i konvertuje alternativne domene u primarne"""
+    if not stream_url:
+        return ""
+
+    # Normalizacija mirror domena u standardne domene koje ResolveURL 100% prepoznaje
+    stream_url = re.sub(r'https?://(?:www\.)?bysebuho\.com/', 'https://filemoon.sx/', stream_url, flags=re.IGNORECASE)
+    stream_url = re.sub(r'https?://(?:www\.)?morencius\.com/', 'https://vidhidepro.com/', stream_url, flags=re.IGNORECASE)
+
+    if "$$" in stream_url or not referer:
         return stream_url
 
     hostname = normalize_hostname(stream_url)
@@ -107,6 +114,7 @@ def add_resolver_referer(stream_url, referer, hoster_name=""):
         return f"{stream_url}$${referer}"
 
     return stream_url
+
 
 def extract_year(raw_desc):
     """Izvlači 4-cifrenu godinu iz opisa radi poboljšanja TMDB metapodataka"""
